@@ -139,7 +139,7 @@ export class ComfortCloudClient {
   async getDevice(id: string, name?: string): Promise<Device | null> {
     try {
       const response = await this.axiosInstance.get(
-        this.urlPartDevice + id,
+        this.urlPartDevice + encodeURIComponent(id),
         {
           headers: {
             ...getBaseRequestHeaders(this._appVersion, this.oauthClient.token, this._appType),
