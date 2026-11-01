@@ -132,9 +132,30 @@ describe('ComfortCloudClient Tests', () => {
 
     const device = await client.getDevice(deviceGuid);
 
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      '/deviceStatus/device1',
+      expect.anything()
+    );
     expect(device).not.toBeNull();
     expect(device?.guid).toBe(deviceGuid);
     expect(device?.temperatureSet).toBe(22);
+  });
+
+  test('getDevice encodes reserved characters in the GUID and keeps the raw guid', async () => {
+    const deviceGuid = 'CS-A73C7247/20230509/M100007#';
+
+    mockedAxios.get.mockResolvedValueOnce({
+      status: 200,
+      data: mockDeviceResponse
+    });
+
+    const device = await client.getDevice(deviceGuid);
+
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      '/deviceStatus/CS-A73C7247%2F20230509%2FM100007%23',
+      expect.anything()
+    );
+    expect(device?.guid).toBe(deviceGuid);
   });
 
   test('setDevice', async () => {
